@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Accounts Summary</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="nav">
+    <div>
+        <strong>Select Month:</strong>
+        <select id="monthPicker" onchange="updateDisplay()">
+            <option>Loading...</option>
+        </select>
+    </div>
+    <button onclick="window.print()">Print to PDF</button>
+</div>
+
+<div class="container" id="report">
+    <h2>Accounts Sheet Summary</h2>
+    <div class="month-ending-wrapper">
+        For Month Ending: <span id="out-month" class="line-text"></span>
+    </div>
+
+    <div class="section">
+        <div class="section-title">Receipts:</div>
+        <div class="row">Balance Forward <div class="val-box" id="r-fwd"></div></div>
+        <div class="row">IN (+) <div class="val-box" id="r-in"></div></div>
+        <div class="row">OUT (-) <div class="val-box" id="r-out"></div></div>
+        <div class="row bold-row">Ending Balance <div class="val-box" id="r-end"></div></div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">Primary Account:</div>
+        <div class="row">Balance Forward <div class="val-box" id="p-fwd"></div></div>
+        <div class="row">IN (+) <div class="val-box" id="p-in"></div></div>
+        <div class="row">OUT (-) <div class="val-box" id="p-out"></div></div>
+        <div class="row bold-row">Ending Balance <div class="val-box" id="p-end"></div></div>
+    </div>
+
+    <div class="total-funds">
+        <span>TOTAL FUNDS ON HAND AT END OF MONTH</span>
+        <div id="grand-total" class="grand-total-val"></div>
+    </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
