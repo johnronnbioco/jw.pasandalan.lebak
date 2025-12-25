@@ -1,5 +1,5 @@
 // Replace this with your Google Sheets Published CSV Link
-const csvUrl = 'PASTE_YOUR_LINK_HERE'; 
+const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS2_z4wyXRZ1KbjW7K_eqKeU89HYqYXc80ROCag6KnkxJkgh3tHxFYSn0OYySCUfw/pub?gid=1305726157&single=true&output=csv'; 
 let dataStore = [];
 
 async function loadData() {
@@ -69,4 +69,5 @@ function updateDisplay() {
 }
 
 // Initial data load
+
 loadData();
