@@ -2,20 +2,20 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
     <title>Primary Account Summary</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <div class="nav">
-    <div>
-        <strong>Select Month:</strong>
+    <div class="selector-group">
+        <label for="monthPicker">Select Month:</label>
         <select id="monthPicker" onchange="updateDisplay()">
             <option>Loading...</option>
         </select>
     </div>
-    <button onclick="window.print()">Print to PDF</button>
+    <button class="print-btn" onclick="window.print()">Print PDF</button>
 </div>
 
 <div class="container" id="report">
@@ -33,7 +33,7 @@
     </div>
 
     <div class="total-funds">
-        <span>TOTAL FUNDS ON HAND AT END OF MONTH</span>
+        <span>TOTAL FUNDS ON HAND</span>
         <div id="grand-total" class="grand-total-val"></div>
     </div>
 </div>
