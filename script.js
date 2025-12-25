@@ -1,5 +1,5 @@
 // Replace this with your Google Sheets Published CSV Link
-const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTimop-MSQF3z2MZNYAthBOQWJmQiZQUbbqCpdDtc1S5GTds0-O7lLiBDoqvcdSMQ/pub?gid=377971086&single=true&output=csv'; 
+const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTimop-MSQF3z2MZNYAthBOQWJmQiZQUbbqCpdDtc1S5GTds0-O7lLiBDoqvcdSMQ/pub?output=csv'; 
 let dataStore = [];
 
 async function loadData() {
@@ -7,25 +7,21 @@ async function loadData() {
         const response = await fetch(csvUrl);
         const text = await response.text();
         
-        if (text.includes("<!DOCTYPE")) {
-            throw new Error("HTML detected instead of CSV");
-        }
+        if (text.includes("<!DOCTYPE")) throw new Error("Link error");
 
-        // SAVE TO LOCAL STORAGE for offline use
+        // Save for offline use and record the sync time
         localStorage.setItem('cachedAccountData', text);
-        console.log("Data synced and saved for offline use.");
+        localStorage.setItem('lastSyncTime', new Date().toLocaleString());
         
         processData(text);
     } catch (e) {
-        console.warn("Internet offline or link error. Checking for saved data...");
-        
-        // LOAD FROM LOCAL STORAGE if fetch fails
         const savedData = localStorage.getItem('cachedAccountData');
         if (savedData) {
             processData(savedData);
-            alert("Viewing offline copy (last synced version).");
+            const syncTime = localStorage.getItem('lastSyncTime');
+            alert("Offline Mode: Data last updated on " + syncTime);
         } else {
-            alert("No internet connection and no offline data saved yet.");
+            alert("Connection failed. No offline data available.");
         }
     }
 }
@@ -35,15 +31,18 @@ function processData(csvText) {
     const picker = document.getElementById('monthPicker');
     picker.innerHTML = '';
     
-    // Auto-select current month logic
+    // Get current month name (e.g., "December")
     const currentMonthName = new Intl.DateTimeFormat('en-US', { month: 'long' }).format(new Date());
 
     dataStore[0].forEach((month, i) => {
-        if(i > 0 && month.trim()) {
+        const cleanMonth = month.trim();
+        if(i > 0 && cleanMonth) {
             let opt = document.createElement('option');
             opt.value = i;
-            opt.text = month.trim();
-            if (month.trim().toLowerCase() === currentMonthName.toLowerCase()) {
+            opt.text = cleanMonth;
+            
+            // IMPROVED MATCHING: Case-insensitive and trimmed
+            if (cleanMonth.toLowerCase() === currentMonthName.toLowerCase()) {
                 opt.selected = true;
             }
             picker.appendChild(opt);
@@ -67,11 +66,8 @@ function updateDisplay() {
         pFwd = getVal(9, col); // Excel Row 10
     } else {
         const prevCol = col - 1;
-        // The "Chain" calculation
-        const prevPFwd = getVal(9, prevCol);
-        const prevPIn  = getVal(10, prevCol);
-        const prevPOut = getVal(11, prevCol);
-        pFwd = (prevPFwd + prevPIn) - prevPOut;
+        // Calculation chain: (Prev Fwd + Prev In) - Prev Out
+        pFwd = (getVal(9, prevCol) + getVal(10, prevCol)) - getVal(11, prevCol);
     }
 
     const pIn  = getVal(10, col); // Row 11
@@ -87,4 +83,3 @@ function updateDisplay() {
 }
 
 loadData();
-
