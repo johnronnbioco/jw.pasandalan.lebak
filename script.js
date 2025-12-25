@@ -1,19 +1,16 @@
 // Replace this with your Google Sheets Published CSV Link
-const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS2_z4wyXRZ1KbjW7K_eqKeU89HYqYXc80ROCag6KnkxJkgh3tHxFYSn0OYySCUfw/pub?gid=1305726157&single=true&output=csv'; 
+const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTimop-MSQF3z2MZNYAthBOQWJmQiZQUbbqCpdDtc1S5GTds0-O7lLiBDoqvcdSMQ/pub?gid=548462238&single=true&output=csv'; 
 let dataStore = [];
 
 async function loadData() {
     try {
         const response = await fetch(csvUrl);
         const text = await response.text();
-        
-        // Convert CSV text to a 2D Array
         dataStore = text.split('\n').map(row => row.split(','));
         
         const picker = document.getElementById('monthPicker');
         picker.innerHTML = '';
         
-        // Populate the dropdown with months from the first row (headers)
         dataStore[0].forEach((month, i) => {
             if(i > 0 && month.trim()) {
                 let opt = document.createElement('option');
@@ -26,48 +23,51 @@ async function loadData() {
         updateDisplay();
     } catch (e) {
         console.error("Error loading data:", e);
-        alert("Failed to load data. Please check your CSV link.");
     }
 }
 
 function updateDisplay() {
-    const col = document.getElementById('monthPicker').value;
+    const col = parseInt(document.getElementById('monthPicker').value);
     if (!col || dataStore.length === 0) return;
 
-    // Helper to pull data by Excel row index (0-indexed)
-    const getVal = (row) => {
-        const val = dataStore[row] ? dataStore[row][col] : 0;
+    // Helper to pull data from specific cells
+    const getVal = (row, column) => {
+        const val = dataStore[row] ? dataStore[row][column] : 0;
         return parseFloat(val) || 0;
     };
 
-    // Row Mapping: 
-    // Row 4 = index 3, Row 5 = index 4, etc.
-    const rFwd = getVal(3);
-    const rIn  = getVal(4);
-    const rOut = getVal(5);
-    const rEnd = (rFwd + rIn) - rOut;
+    let pFwd;
 
-    const pFwd = getVal(9);
-    const pIn  = getVal(10);
-    const pOut = getVal(11);
+    // --- LOGIC FOR PRIMARY BALANCE FORWARD ---
+    if (col === 1) {
+        // If January (Column B), pull directly from Row 10 (index 9)
+        pFwd = getVal(9, col);
+    } else {
+        // For other months, calculate the Ending Balance of the PREVIOUS month
+        const prevCol = col - 1;
+        const prevPFwd = getVal(9, prevCol); // Previous Month Forward
+        const prevPIn  = getVal(10, prevCol); // Previous Month IN
+        const prevPOut = getVal(11, prevCol); // Previous Month OUT
+        
+        // The "Chain": Prev End becomes Current Forward
+        pFwd = (prevPFwd + prevPIn) - prevPOut;
+    }
+
+    // --- CURRENT MONTH CALCULATION ---
+    const pIn  = getVal(10, col); // Row 11
+    const pOut = getVal(11, col); // Row 12
     const pEnd = (pFwd + pIn) - pOut;
 
-    // Update the DOM
+    // --- UPDATE THE UI ---
     document.getElementById('out-month').innerText = dataStore[0][col];
     
-    document.getElementById('r-fwd').innerText = rFwd.toLocaleString();
-    document.getElementById('r-in').innerText  = rIn.toLocaleString();
-    document.getElementById('r-out').innerText = rOut.toLocaleString();
-    document.getElementById('r-end').innerText = rEnd.toLocaleString();
+    document.getElementById('p-fwd').innerText = pFwd.toLocaleString(undefined, {minimumFractionDigits: 2});
+    document.getElementById('p-in').innerText  = pIn.toLocaleString(undefined, {minimumFractionDigits: 2});
+    document.getElementById('p-out').innerText = pOut.toLocaleString(undefined, {minimumFractionDigits: 2});
+    document.getElementById('p-end').innerText = pEnd.toLocaleString(undefined, {minimumFractionDigits: 2});
 
-    document.getElementById('p-fwd').innerText = pFwd.toLocaleString();
-    document.getElementById('p-in').innerText  = pIn.toLocaleString();
-    document.getElementById('p-out').innerText = pOut.toLocaleString();
-    document.getElementById('p-end').innerText = pEnd.toLocaleString();
-
-    document.getElementById('grand-total').innerText = (rEnd + pEnd).toLocaleString();
+    // Total Funds on Hand matches the Primary Ending Balance
+    document.getElementById('grand-total').innerText = pEnd.toLocaleString(undefined, {minimumFractionDigits: 2});
 }
-
-// Initial data load
 
 loadData();
