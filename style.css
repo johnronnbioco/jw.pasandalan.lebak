@@ -1,102 +1,29 @@
-/* General Layout */
-body { 
-    font-family: "Times New Roman", serif; 
-    background-color: #333; 
-    display: flex; 
-    flex-direction: column; 
-    align-items: center; 
-    padding: 10px; /* Reduced for mobile */
-    margin: 0;
-}
+body { font-family: "Times New Roman", serif; background-color: #222; display: flex; flex-direction: column; align-items: center; padding: 10px; margin: 0; }
 
-/* Responsive Navigation */
-.nav { 
-    background: white; 
-    padding: 15px; 
-    border-radius: 8px; 
-    margin-bottom: 20px; 
-    width: 90%; 
-    max-width: 560px; 
-    display: flex; 
-    flex-wrap: wrap; /* Allows wrapping on small screens */
-    justify-content: space-between; 
-    align-items: center; 
-    gap: 10px;
-}
+.nav { background: white; padding: 15px; border-radius: 8px; margin-bottom: 20px; width: 95%; max-width: 600px; display: flex; justify-content: space-between; align-items: center; gap: 10px; box-sizing: border-box; }
 
-/* Bigger Dropdown */
-#monthPicker {
-    padding: 12px;
-    font-size: 18px; /* Bigger text */
-    border-radius: 5px;
-    border: 2px solid #007bff;
-    width: 100%; /* Full width on small screens */
-    max-width: 250px;
-}
+#monthPicker, #yearPicker { padding: 10px; font-size: 16px; border-radius: 5px; border: 1px solid #ccc; }
 
-/* Responsive Container */
-.container { 
-    background: white; 
-    width: 95%; 
-    max-width: 500px; 
-    padding: 20px; 
-    border: 2px solid black; 
-    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-    box-sizing: border-box;
-}
+.container { background: white; width: 95%; max-width: 600px; padding: 20px; border: 2px solid black; box-sizing: border-box; }
 
-h2 { text-align: center; font-size: 1.4em; text-transform: uppercase; margin: 0; }
+.row { display: flex; justify-content: space-between; margin: 10px 0; }
+.val-box { border-bottom: 1px solid black; width: 120px; text-align: right; font-weight: bold; }
+.bold-row { font-weight: bold; border-top: 1px solid #ccc; padding-top: 10px; }
 
-.month-ending-wrapper { text-align: center; margin-top: 10px; font-size: 1.1em; }
+/* Accordion & Table */
+.accordion { width: 100%; background: #eee; border: 1px solid #ccc; padding: 10px; margin-top: 20px; font-weight: bold; cursor: pointer; }
+.panel { display: none; background: white; border: 1px solid #ccc; border-top: none; }
 
-.line-text { 
-    border-bottom: 1px solid black; 
-    min-width: 120px; 
-    display: inline-block; 
-    font-weight: bold; 
-}
+#full-ledger { width: 100%; border-collapse: collapse; font-size: 12px; }
+#full-ledger th, #full-ledger td { border: 1px solid #ddd; padding: 8px; text-align: center; }
 
-.section { margin-top: 25px; }
-.section-title { font-weight: bold; text-transform: uppercase; margin-bottom: 5px; border-left: 4px solid black; padding-left: 8px; }
+/* Table Header Colors from your Image */
+.head-ww { background-color: #66a3ff; color: white; }
+.head-cong { background-color: #99ff99; }
+.head-kh { background-color: #ff4d4d; color: white; }
+.head-resin { background-color: #ff9999; }
+.head-resout { background-color: #ffffff; border: 2px solid green !important; }
 
-.row { 
-    display: flex; 
-    justify-content: space-between; 
-    margin: 12px 0; 
-    font-size: 1em;
-}
+.sync-info { font-size: 10px; color: gray; text-align: center; margin-top: 20px; }
 
-.val-box { 
-    border-bottom: 1px solid black; 
-    width: 110px; 
-    text-align: right; 
-    font-family: Arial, sans-serif; 
-    font-weight: bold; 
-}
-
-.total-funds { 
-    margin-top: 40px; 
-    font-weight: bold; 
-    border-bottom: 4px double black; 
-    display: flex; 
-    justify-content: space-between; 
-    padding: 10px 0;
-    font-size: 1.1em;
-}
-
-.print-btn { 
-    padding: 12px 20px; 
-    background: #007bff; 
-    color: white; 
-    border: none; 
-    border-radius: 5px; 
-    font-weight: bold;
-    cursor: pointer;
-}
-
-/* Print Styling */
-@media print {
-    .nav, .print-btn { display: none; }
-    body { background: white; padding: 0; }
-    .container { width: 100%; box-shadow: none; border: 2px solid black; }
-}
+@media print { .nav { display: none; } .container { width: 100%; border: none; } }
