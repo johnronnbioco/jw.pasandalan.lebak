@@ -62,15 +62,20 @@ function updateDisplay() {
     const selMonth = document.getElementById('monthPicker').selectedOptions[0].text;
     const selYear = document.getElementById('yearPicker').value;
 
+    const now = new Date();
+    const curMonthName = new Intl.DateTimeFormat('en-US', { month: 'long' }).format(now);
+    const curYear = now.getFullYear().toString();
+    const curDay = now.getDate();
+
     const getVal = (r, c) => parseFloat(dataStore[r][c]) || 0;
 
-    // Chain Calculation
+    // Chain Calculation for Summary
     let pFwd = (col === 1) ? getVal(9, col) : (getVal(9, col-1) + getVal(10, col-1)) - getVal(11, col-1);
     const pIn = getVal(10, col);
     const pOut = getVal(11, col);
     const pEnd = (pFwd + pIn) - pOut;
 
-    // Update Totals
+    // Update UI Totals
     document.getElementById('out-month').innerText = selMonth;
     document.getElementById('out-year').innerText = selYear;
     document.getElementById('p-fwd').innerText = pFwd.toLocaleString(undefined, {minimumFractionDigits: 2});
@@ -83,11 +88,23 @@ function updateDisplay() {
     // Populate Detailed Ledger (Row 21+)
     const tbody = document.getElementById('ledger-body');
     tbody.innerHTML = "";
+
     for(let i=20; i < dataStore.length; i++) {
         const row = dataStore[i];
         if(!row || row.length < 8) continue;
-        // Map: A=Date, B=WW, C=Cong, D=KH, E=ResIn, F=ResOut, G=Month, H=Year
-        if(row[6]?.trim().toLowerCase() === selMonth.toLowerCase() && row[7]?.trim() === selYear) {
+
+        const rowDate = parseInt(row[0]); // Column A: Date
+        const rowMonth = row[6]?.trim();  // Column G: Month
+        const rowYear = row[7]?.trim();   // Column H: Year
+
+        // Only show if Month and Year match
+        if(rowMonth.toLowerCase() === selMonth.toLowerCase() && rowYear === selYear) {
+            
+            // NEW LOGIC: If viewing the CURRENT month/year, hide future dates
+            if (selMonth.toLowerCase() === curMonthName.toLowerCase() && selYear === curYear) {
+                if (rowDate > curDay) continue; // Skip if date is in the future
+            }
+
             tbody.innerHTML += `<tr>
                 <td>${row[0]}</td><td>${row[1]}</td><td>${row[2]}</td>
                 <td>${row[3]}</td><td>${row[4]}</td><td>${row[5]}</td>
@@ -102,3 +119,4 @@ function toggleAccordion(id) {
 }
 
 loadData();
+
