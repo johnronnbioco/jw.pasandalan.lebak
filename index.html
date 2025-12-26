@@ -2,15 +2,15 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
-    <title>Primary Account Summary</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account Ledger Summary</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <div class="nav">
     <div class="selector-group">
-        <label for="monthPicker">Select Month:</label>
+        <select id="yearPicker" onchange="updateDisplay()"></select>
         <select id="monthPicker" onchange="updateDisplay()">
             <option>Loading...</option>
         </select>
@@ -21,21 +21,44 @@
 <div class="container" id="report">
     <h2>Accounts Sheet Summary</h2>
     <div class="month-ending-wrapper">
-        For Month Ending: <span id="out-month" class="line-text"></span>
+        For: <span id="out-month" class="line-text"></span> <span id="out-year" class="line-text"></span>
     </div>
 
     <div class="section">
         <div class="section-title">Primary Account:</div>
-        <div class="row">Balance Forward <div class="val-box" id="p-fwd"></div></div>
-        <div class="row">IN (+) <div class="val-box" id="p-in"></div></div>
-        <div class="row">OUT (-) <div class="val-box" id="p-out"></div></div>
-        <div class="row bold-row">Ending Balance <div class="val-box" id="p-end"></div></div>
+        <div class="row">Balance Forward <div class="val-box" id="p-fwd">0.00</div></div>
+        <div class="row">IN (+) <div class="val-box" id="p-in">0.00</div></div>
+        <div class="row">OUT (-) <div class="val-box" id="p-out">0.00</div></div>
+        <div class="row bold-row">Ending Balance <div class="val-box" id="p-end">0.00</div></div>
+    </div>
+
+    <button class="accordion" onclick="toggleAccordion('ledger-details')">
+        VIEW TRANSACTION DETAILS ▾
+    </button>
+    <div id="ledger-details" class="panel">
+        <div style="overflow-x: auto;">
+            <table id="full-ledger">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th class="head-ww">Worldwide Work</th>
+                        <th class="head-cong">Congregation</th>
+                        <th class="head-kh">KH Expenses</th>
+                        <th class="head-resin">Resolution In</th>
+                        <th class="head-resout">Resolution Out</th>
+                    </tr>
+                </thead>
+                <tbody id="ledger-body"></tbody>
+            </table>
+        </div>
     </div>
 
     <div class="total-funds">
         <span>TOTAL FUNDS ON HAND</span>
-        <div id="grand-total" class="grand-total-val"></div>
+        <div id="grand-total" class="grand-total-val">0.00</div>
     </div>
+    
+    <p class="sync-info">Last Synced: <span id="sync-time">---</span></p>
 </div>
 
 <script src="script.js"></script>
